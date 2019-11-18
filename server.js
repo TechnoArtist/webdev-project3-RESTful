@@ -23,6 +23,9 @@ Extra features:
 		 ?format=[json|xml], default=json
 
 TODO: 
+replace old project code with new project code
+	'users' should be replaced with the sql database
+	all four response handlers need to have their functions replaced
 
 */
 
@@ -51,12 +54,20 @@ fs.readFile(user_file, (err, data) => {
 	}
 }); 
 
-//GET: retrieve list of all users
-app.get('/:list-users', (req, res) => {
+//GET codes: return list of codes:incident types
+app.get('/codes', (req, res) => {
 	res.type('json').send(users); 
 }); 
-//PUT: insert new user in object
-app.put('/:add-user', (req, res) => {
+//GET neighborhoods: return list of neighborhood ID:name
+app.get('/neighborhoods', (req, res) => {
+	res.type('json').send(users); 
+}); 
+//GET incidents: return list of incident ID:details (date, time, code, incident, police_grid, neighborhood_number, block)
+app.get('/incidents', (req, res) => {
+	res.type('json').send(users); 
+}); 
+//PUT new-incident: add new incident with case number and details (date, time, code, incident, police_grid, neighborhood_number, block)
+app.put('/:new-incident', (req, res) => {
 	var new_user = {
 		id: parseInt(req.body.id, 10), 
 		name: req.body.name, 
@@ -74,26 +85,6 @@ app.put('/:add-user', (req, res) => {
 			res.status(200).send(new_user); 
 		}); 
 	}
-}); 
-//DELETE: remove user from object
-app.delete('/:remove-user', (req, res) => {
-	//does the user exist? 
-	var success = false; 
-	//loop through each user, compare to req.body.id
-	for(var i = 0; i < users.users.length; i++) {
-		//if a user has that ID, remove the ID
-		if(users.users[i].id === parseInt(req.body.id, 10)) {
-			delete users.users[i]; // This will remove the object that has a matching ID
-			res.status(200).send(users); 
-			success = true; 
-		}
-	}
-	//if no users have that ID, send error status 500
-	if(!success) res.status(500).send("Could not find a user with ID "+req.body.id+" to delete. "); 
-}); 
-//POST: update name/email of user
-app.post('/:update-user', (req, res) => {
-	//TODO posting
 }); 
 
 console.log('Listening for connections on port '+port+'. '); 
