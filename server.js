@@ -76,10 +76,20 @@ app.get('/codes', (req, res) => {
 		?format=[json|xml], default = json
 	*/
 	
+	//create a result object
+	//for each valid code in the database, add it to the result as the key for the matching value incident_type. 
+	//set the res type to json or xml, as selected
+	//send the result. 
+	
 	res.type('json').send(users); 
 }); 
 //GET neighborhoods: return list of neighborhood ID:name
 app.get('/neighborhoods', (req, res) => {
+	
+	//create a result object
+	//for each valid ID in the database, add it to the result as the key for the matching neighborhood name. 
+	//send the result. 
+	
 	res.type('json').send(users); 
 }); 
 //GET incidents: return list of incident ID:details (date, time, code, incident, police_grid, neighborhood_number, block)
@@ -93,10 +103,24 @@ app.get('/incidents', (req, res) => {
 		 ?format=[json|xml], default=json
 	*/
 	
+	//create a result object
+	//for each valid ID in the database (between dates, matching code/grid, until max...), 
+	//	for each detail, 
+	//		add the details to an object as values (with their names as keys)
+	//	add the new object to the result under the key of that ID. 
+	//set the res type to json or xml, as selected
+	//send the result. 
+	
 	res.type('json').send(users); 
 }); 
 //PUT new-incident: add new incident with case number and details (date, time, code, incident, police_grid, neighborhood_number, block)
 app.put('/:new-incident', (req, res) => {
+	
+	//create a new object with the input
+	//check the existing database to see if the ID already exists (if so, reject; else, continue)
+	//add the new input to the database
+	//send a success message
+	
 	var new_user = {
 		id: parseInt(req.body.id, 10), 
 		name: req.body.name, 
