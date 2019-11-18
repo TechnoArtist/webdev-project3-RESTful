@@ -22,6 +22,22 @@ Extra features:
 		 ?limit=[max number of incidents to display], default=10 000
 		 ?format=[json|xml], default=json
 
+Database outline: 
+    Codes:
+        code (INTEGER) - crime incident type numeric code
+        incident_type (TEXT) - crime incident type description
+    Neighborhoods:
+        neighborhood_number (INTEGER) - neighborhood id
+        neighborhood_name (TEXT) - neighborhood name
+    Incidents:
+        case_number (TEXT): unique id from crime case
+        date_time (DATETIME): date and time when incident took place
+        code (INTEGER): crime incident type numeric code
+        incident (TEXT): crime incident description (more specific than incident_type)
+        police_grid (INTEGER): police grid number where incident occurred
+        neighborhood_number (INTEGER): neighborhood id where incident occurred
+        block (TEXT): approximate address where incident occurred
+
 TODO: 
 replace old project code with new project code
 	all four response handlers need to have their functions replaced
@@ -29,7 +45,6 @@ Should the 'sqlite3.OPEN_READONLY' be changed when setting the database variable
 
 */
 
-var fs = require('fs');
 var path = require('path');
 var express = require('express'); 
 var bodyParser = require('body-parser'); 
