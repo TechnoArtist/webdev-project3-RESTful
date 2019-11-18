@@ -4,13 +4,25 @@
 /* NOTES
 Issues: 
 
+Outline: 
+	GET /codes (return JSON/XML of codes:incident type)
+	GET /neighborhoods (return JSON/XML of neighborhood ID:name)
+	GET /incidents (return JSON/XML of crime incidents ID:{date, time, code, incident, police_grid, neighborhood_number, block})
+	PUT /new-incident (upload or reject incident data: case_number, date, time, code, incident, police_grid, neighborhood_number, block)
+
+Extra features: 
+	GET /codes 
+		 ?code=[comma seperated list of codes], default = all codes
+		 ?format=[json|xml], default = json
+	GET /incidents, defaults = all
+		 ?start_date=[yyyy-mm-dd]
+		 ?end_date=[yyyy-mm-dd]
+		 ?code=[comma separated list of codes to include]
+		 ?grid=[comma separated list of police grids to include]
+		 ?limit=[max number of incidents to display], default=10 000
+		 ?format=[json|xml], default=json
 
 TODO: 
-fill out each page
-post
-get (list-users)
-	- limit (max num users to respond with: /list-users?limit=2)
-	- format (json vs xml format: /list-users?format=xml) (use modules!)
 
 */
 
