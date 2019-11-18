@@ -24,8 +24,8 @@ Extra features:
 
 TODO: 
 replace old project code with new project code
-	'users' should be replaced with the sql database
 	all four response handlers need to have their functions replaced
+Should the 'sqlite3.OPEN_READONLY' be changed when setting the database variable? 
 
 */
 
@@ -34,28 +34,33 @@ var path = require('path');
 var express = require('express'); 
 var bodyParser = require('body-parser'); 
 var favicon = require('serve-favicon'); 
+var sqlite3 = require('sqlite3'); 
 
 var port = 8000; 
 var public_dir = path.join(__dirname, 'public'); 
-var user_file = path.join(public_dir, 'users.json'); 
+var db_filename = path.join(public_dir, 'stpaul_crime.sqlite3'); 
 
 var app = express(); 
 app.use(express.static(public_dir)); 
 app.use(bodyParser.urlencoded({extended: true})); 
 app.use(favicon(path.join(public_dir,'favicon.ico')));
 
-users = {}; 
-fs.readFile(user_file, (err, data) => {
-	if (err) {
-		users = {users: []}; 
+var database = new sqlite3.Database(db_filename, sqlite3.OPEN_READONLY, (err) => {
+	if(err) {
+		console.log("Error opening " + db_filename); 
 	}
 	else {
-		users = JSON.parse(data); 
+		console.log("Now connected to " + db_filename); 
 	}
 }); 
 
 //GET codes: return list of codes:incident types
 app.get('/codes', (req, res) => {
+	/* options
+		?code=[comma seperated list of codes], default = all codes
+		?format=[json|xml], default = json
+	*/
+	
 	res.type('json').send(users); 
 }); 
 //GET neighborhoods: return list of neighborhood ID:name
@@ -64,6 +69,15 @@ app.get('/neighborhoods', (req, res) => {
 }); 
 //GET incidents: return list of incident ID:details (date, time, code, incident, police_grid, neighborhood_number, block)
 app.get('/incidents', (req, res) => {
+	/* options (defaults = show all)
+		 ?start_date=[yyyy-mm-dd]
+		 ?end_date=[yyyy-mm-dd]
+		 ?code=[comma separated list of codes to include]
+		 ?grid=[comma separated list of police grids to include]
+		 ?limit=[max number of incidents to display], default=10 000
+		 ?format=[json|xml], default=json
+	*/
+	
 	res.type('json').send(users); 
 }); 
 //PUT new-incident: add new incident with case number and details (date, time, code, incident, police_grid, neighborhood_number, block)
