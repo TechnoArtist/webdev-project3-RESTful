@@ -6,21 +6,18 @@ Issues:
 
 Outline: 
 	GET /codes (return JSON/XML of codes:incident type)
-	GET /neighborhoods (return JSON/XML of neighborhood ID:name)
-	GET /incidents (return JSON/XML of crime incidents ID:{date, time, code, incident, police_grid, neighborhood_number, block})
-	PUT /new-incident (upload or reject incident data: case_number, date, time, code, incident, police_grid, neighborhood_number, block)
-
-Extra features: 
-	GET /codes 
 		 ?code=[comma seperated list of codes], default = all codes
 		 ?format=[json|xml], default = json
-	GET /incidents, defaults = all
+	GET /neighborhoods (return JSON/XML of neighborhood ID:name)
+	GET /incidents (return JSON/XML of crime incidents ID:{date, time, code, incident, police_grid, neighborhood_number, block})
+		 (defaults = all)
 		 ?start_date=[yyyy-mm-dd]
 		 ?end_date=[yyyy-mm-dd]
 		 ?code=[comma separated list of codes to include]
 		 ?grid=[comma separated list of police grids to include]
 		 ?limit=[max number of incidents to display], default=10 000
 		 ?format=[json|xml], default=json
+	PUT /new-incident (upload or reject incident data: case_number, date, time, code, incident, police_grid, neighborhood_number, block)
 
 Database outline: 
     Codes:
@@ -40,10 +37,12 @@ Database outline:
 
 TODO: 
 replace old project code with new project code
-	all four response handlers need to have their functions replaced
-Should the 'sqlite3.OPEN_READONLY' be changed when setting the database variable? 
+	/codes
+	/neighborhoods
+	/incidents
+	/new-incident
 Check the conditional in /codes for matching codes
-Check if more of the details in /new-incident need to be parsed
+Replace "stpaul_crime_practice" with "stpaul_crime" (was using a copy to work on the editing feature)
 
 */
 
@@ -55,14 +54,14 @@ var sqlite3 = require('sqlite3');
 
 var port = 8000; 
 var public_dir = path.join(__dirname, 'public'); 
-var db_filename = path.join(public_dir, 'stpaul_crime.sqlite3'); 
+var db_filename = path.join(public_dir, 'stpaul_crime_practice.sqlite3'); 
 
 var app = express(); 
 app.use(express.static(public_dir)); 
 app.use(bodyParser.urlencoded({extended: true})); 
 app.use(favicon(path.join(public_dir,'favicon.ico')));
 
-var database = new sqlite3.Database(db_filename, sqlite3.OPEN_READONLY, (err) => {
+var database = new sqlite3.Database(db_filename, sqlite3.OPEN_READWRITE, (err) => {
 	if(err) {
 		console.log("Error opening " + db_filename); 
 	}
@@ -70,6 +69,9 @@ var database = new sqlite3.Database(db_filename, sqlite3.OPEN_READONLY, (err) =>
 		console.log("Now connected to " + db_filename); 
 	}
 }); 
+
+//print one row of the incidents table, for formatting reference
+//database.get("select * from incidents", (err, data) => { console.log(data); }); 
 
 //GET codes: return list of codes:incident types
 app.get('/codes', (req, res) => {
@@ -142,56 +144,43 @@ app.get('/incidents', (req, res) => {
 //PUT new-incident: add new incident with case number and details (date, time, code, incident, police_grid, neighborhood_number, block)
 app.put('/:new-incident', (req, res) => {
 	var success = true; 
+	var message = ""; 
 	
 	//create a new object with the input
 	var new_incident = {
-		//TODO check if more of these need to be parsed
-		case_number: req.body.case_number; //text ('I' + integer), leave as text
-		date: req.body.date, //datetime (date and time are combined in database), leave as string
-		time: req.body.time, //datetime (date and time are combined in database), leave as string
-		code: req.body.code, //'C' + integer, convert to int
-		incident: req.body.incident, //text, leave as text
-		police_grid: req.body.police_grid, //integer, parse to int
-		neighborhood_number: req.body.neighborhood_number, //'N' + integer, convert to int
-		block: req.body.block //text, leave as text
+		case_number: req.body.case_number, 
+		date_time: req.body.date + "T" + req.body.time, 
+		code: parseInt(req.body.code.substring(1)), 
+		incident: req.body.incident, 
+		police_grid: parseInt(req.body.police_grid), 
+		neighborhood_number: parseInt(req.body.neighborhood_number.substring(1)), 
+		block: req.body.block 
 	}; 
 	
 	//check the existing database to see if the ID already exists (if so, reject; else, continue)
 	database.each("select case_number from incidents", (err, row) => {
-		if(row[0] === new_incident[case_number]) {
+		if(row[0] === new_incident.case_number) {
 			success = false; 
-			res.status(500).send("Internal Server Error: user ID already exists"); 
+			message = "Internal Server Error: user ID already exists"; 
 		}
 	}); 
 	
 	//add the new input to the database
-	
-	
-	
+	database.run("insert into incidents(case_number, date_time, code, incident, police_grid, neighborhood_number, block) values(?, ?, ?, ?, ?, ?, ?)", [new_incident.case_number, new_incident.date_time, new_incident.code, new_incident.incident, new_incident.police_grid, new_incident.neighborhood_number, new_incident.block], (err) => {
+		if(err) {
+			console.log("Failed to insert new incident. " + err.message); 
+		} else {
+			console.log("Row was added to the table: new_incident"); 
+			console.log(new_incident); 
+		}
+	}); 
 	
 	//send a success message
 	if(success) res.status(200).send(new_incident); 
-	
-	//this is code from a different project, only here to help remember syntax
-	var new_user = {
-		id: parseInt(req.body.id, 10), 
-		name: req.body.name, 
-	}
-	var has_id = false; 
-	for( let i = 0; i < users.users.length; i++) {
-		if(users.users[i].id === new_user.id) has_id = true; 
-	}
-	if(has_id) {
-		res.status(500).send('Internal Server Error: user id already exists'); 
-	}
-	else {
-		users.users.push(new_user); 
-		fs.writeFile(user_file, JSON.stringify(users, null, 4), (err) => {
-			res.status(200).send(new_user); 
-		}); 
-	}
-	//end of previous project code
+	else res.status(500).send(message); 
 }); 
+
+"SELECT * from incidents WHERE CONVERT(DATETIME, date+'T00:00:00.000') < date_time"
 
 console.log('Listening for connections on port '+port+'. '); 
 var server = app.listen(port); 
