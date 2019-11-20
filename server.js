@@ -49,8 +49,9 @@ Replace "stpaul_crime_practice" with "stpaul_crime" (was using a copy to work on
 var path = require('path');
 var express = require('express'); 
 var bodyParser = require('body-parser'); 
-var favicon = require('serve-favicon'); 
+//var favicon = require('serve-favicon'); 
 var sqlite3 = require('sqlite3'); 
+var js2xml  = require("js2xmlparser");
 
 var port = 8000; 
 var public_dir = path.join(__dirname, 'public'); 
@@ -59,7 +60,7 @@ var db_filename = path.join(public_dir, 'stpaul_crime_practice.sqlite3');
 var app = express(); 
 app.use(express.static(public_dir)); 
 app.use(bodyParser.urlencoded({extended: true})); 
-app.use(favicon(path.join(public_dir,'favicon.ico')));
+//app.use(favicon(path.join(public_dir,'favicon.ico')));
 
 var database = new sqlite3.Database(db_filename, sqlite3.OPEN_READWRITE, (err) => {
 	if(err) {
@@ -82,20 +83,26 @@ app.get('/codes', (req, res) => {
 	
 	//create a result object
 	var codes = {}; 
-	
 	//for each valid code in the database, add it to the result as the key for the matching value incident_type. 
-	database.each("select * from codes", (err, row) => {
-		//TODO check the conditional: should mean if the 'code' input contains this code...
-		if(typeOf(res.head.code) !== undefined && res.head.code[row[0]] !== undefined) codes[row[0]] = row[1]; 
+	database.each("select * from CODES", (err, row) => {
+		 codes["C" + row.code] = row.incident_type;
+	}, () =>{
+		if(req.query.format == "json"){
+			res.type("json").send(codes);
+		}
+		else if(req.query.format == "xml"){
+			var codesXML = js2xml.parse("server",codes);
+			res.type("xml").send(codesXML);
+		}
+		else{
+			res.type("json").send(codes);
+		}
+		//send the result. 
 	}); 
 	
 	//set the res type to json or xml, as selected
 	//TODO check the conditional
-	if(res.head.code !== undefined) res.type(res.head.code); 
-	else res.type('json'); 
 	
-	//send the result. 
-	res.send(codes); 
 	
 }); 
 //GET neighborhoods: return list of neighborhood ID:name
@@ -106,11 +113,19 @@ app.get('/neighborhoods', (req, res) => {
 	
 	//for each valid ID in the database, add it to the result as the key for the matching neighborhood name. 
 	database.each("select * from neighborhoods", (err, row) => {
-		neighborhoods[row[0]] = row[1]; 
+		neighborhoods["N" + row.neighborhood_number] = row.neighborhood_name; 
+	}, () =>{
+		if(req.query.format == "json"){
+			res.type("json").send(neighborhoods);
+		}
+		else if(req.query.format == "xml"){
+			var nieghborhoodsXML = js2xml.parse("server",neighborhoods);
+			res.type("xml").send(nieghborhoodsXML);
+		}
+		else{
+			res.type("json").send(neighborhoods);
+		}
 	}); 
-	
-	//send the result. 
-	res.type('json').send(neighborhoods); 
 	
 }); 
 //GET incidents: return list of incident ID:details (date, time, code, incident, police_grid, neighborhood_number, block)
@@ -126,20 +141,36 @@ app.get('/incidents', (req, res) => {
 	
 	//create a result object
 	var incidents = {}; 
-	
 	//for each valid ID in the database (between dates, matching code/grid, until max...), 
-	
-	//	for each detail, 
-	
-	//		add the details to an object as values (with their names as keys)
-	
-	//	add the new object to the result under the key of that ID. 
-	
+	//for each detail, 
+	//add the details to an object as values (with their names as keys)
+	//add the new object to the result under the key of that ID. 
 	//set the res type to json or xml, as selected
-	
-	//send the result. 
-	res.send(incidents); 
-	
+	database.each("SELECT * FROM incidents LIMIT 10", (err, row) => {
+		var tempIncident = {};
+		tempIncident.date = row.date_time.substring(0,10);
+		tempIncident.time = row.date_time.substring(11);
+		tempIncident.code = row.code;
+		tempIncident.incident = row.incident;
+		tempIncident.police_grid = row.police_grid;
+		tempIncident.neighborhood_number = row.neighborhood_number;
+		tempIncident.block = row.block;
+
+		incidents["I" + row.case_number] = tempIncident;
+		//console.log(incidents);
+	}, () => {
+		//send the result. 
+		if(req.query.format == "json"){
+			res.type("json").send(incidents);
+		}
+		else if(req.query.format == "xml"){
+			var incidentsXML = js2xml.parse("server",incidents);
+			res.type("xml").send(incidentsXML);
+		}
+		else{
+			res.type("json").send(incidents);
+		}
+	});
 }); 
 //PUT new-incident: add new incident with case number and details (date, time, code, incident, police_grid, neighborhood_number, block)
 app.put('/:new-incident', (req, res) => {
