@@ -37,30 +37,25 @@ Database outline:
 
 TODO: 
 replace old project code with new project code
-	/codes
-	/neighborhoods
 	/incidents
-	/new-incident
-Check the conditional in /codes for matching codes
-Replace "stpaul_crime_practice" with "stpaul_crime" (was using a copy to work on the editing feature)
 
 */
 
 var path = require('path');
 var express = require('express'); 
 var bodyParser = require('body-parser'); 
-//var favicon = require('serve-favicon'); 
+var favicon = require('serve-favicon'); 
 var sqlite3 = require('sqlite3'); 
 var js2xml  = require("js2xmlparser");
 
 var port = 8000; 
 var public_dir = path.join(__dirname, 'public'); 
-var db_filename = path.join(public_dir, 'stpaul_crime_practice.sqlite3'); 
+var db_filename = path.join(public_dir, 'stpaul_crime.sqlite3'); 
 
 var app = express(); 
 app.use(express.static(public_dir)); 
 app.use(bodyParser.urlencoded({extended: true})); 
-//app.use(favicon(path.join(public_dir,'favicon.ico')));
+app.use(favicon(path.join(public_dir,'favicon.ico')));
 
 var database = new sqlite3.Database(db_filename, sqlite3.OPEN_READWRITE, (err) => {
 	if(err) {
