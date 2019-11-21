@@ -2,8 +2,6 @@
 
 
 /* NOTES
-Issues: 
-
 Outline: 
 	GET /codes (return JSON/XML of codes:incident type)
 		 ?code=[comma seperated list of codes], default = all codes
@@ -36,8 +34,9 @@ Database outline:
         block (TEXT): approximate address where incident occurred
 
 TODO: 
-replace old project code with new project code
-	/incidents
+finish /incidents
+	test whether the sql statement is working as intended
+	figure out why the sql.replace("AND", ""); isn't working
 
 */
 
@@ -82,6 +81,7 @@ app.get('/codes', (req, res) => {
 	database.each("select * from CODES", (err, row) => {
 		 codes["C" + row.code] = row.incident_type;
 	}, () =>{
+		//set the res type to json or xml, as selected, and send the result
 		if(req.query.format == "json"){
 			res.type("json").send(codes);
 		}
@@ -92,12 +92,7 @@ app.get('/codes', (req, res) => {
 		else{
 			res.type("json").send(codes);
 		}
-		//send the result. 
 	}); 
-	
-	//set the res type to json or xml, as selected
-	//TODO check the conditional
-	
 	
 }); 
 //GET neighborhoods: return list of neighborhood ID:name
@@ -136,12 +131,32 @@ app.get('/incidents', (req, res) => {
 	
 	//create a result object
 	var incidents = {}; 
-	//for each valid ID in the database (between dates, matching code/grid, until max...), 
-	//for each detail, 
-	//add the details to an object as values (with their names as keys)
-	//add the new object to the result under the key of that ID. 
-	//set the res type to json or xml, as selected
-	database.each("SELECT * FROM incidents LIMIT 10", (err, row) => {
+	
+	//create an sql string
+	sql = "SELECT * FROM incidents "; 
+	
+	console.log(sql); 
+	
+	//put the applicable request options into the sql query
+	if(Object.entries(req.query).length != 0) 	sql = sql + "WHERE "; 
+	if(req.query.start_date 	!= null) 		sql = sql + "AND date_time > CONVERT(DATETIME, "+req.query.start_date+"T00:00:00.000"+") "; 
+	if(req.query.end_date 		!= null) 		sql = sql + "AND date_time < CONVERT(DATETIME, "+req.query.end_date+"T00:00:00.000"+") "; 
+	if(req.query.code 			!= null) 		sql = sql + "AND code = "+req.query.code+" "; 
+	if(req.query.grid 			!= null) 		sql = sql + "AND police_grid = "+req.query.grid+" "; 
+	if(req.query.limit 			!= null) 		sql = sql + "AND LIMIT "+req.query.limit; 
+	else sql = sql + "LIMIT 10,000 "; 
+	
+	console.log(sql); 
+	
+	//don't start the WHERE with an AND
+	sql.replace("AND", ""); 
+	
+	console.log(sql); 
+	
+	//for each valid ID in the database (between dates, matching code/grid, until max...),   
+	database.each(sql, (err, row) => {
+		//create a new object for the details, and
+		//add the details to the new object as values (with their names as keys)
 		var tempIncident = {};
 		tempIncident.date = row.date_time.substring(0,10);
 		tempIncident.time = row.date_time.substring(11);
@@ -150,21 +165,24 @@ app.get('/incidents', (req, res) => {
 		tempIncident.police_grid = row.police_grid;
 		tempIncident.neighborhood_number = row.neighborhood_number;
 		tempIncident.block = row.block;
-
+		
+		//add the new object to the result under the key of that ID.
 		incidents["I" + row.case_number] = tempIncident;
 		//console.log(incidents);
+		
 	}, () => {
-		//send the result. 
+		//set the res type to json or xml, as selected, and send the result. 
 		if(req.query.format == "json"){
 			res.type("json").send(incidents);
 		}
 		else if(req.query.format == "xml"){
-			var incidentsXML = js2xml.parse("server",incidents);
+			var incidentsXML = js2xml.parse("server", incidents);
 			res.type("xml").send(incidentsXML);
 		}
 		else{
 			res.type("json").send(incidents);
 		}
+		
 	});
 }); 
 //PUT new-incident: add new incident with case number and details (date, time, code, incident, police_grid, neighborhood_number, block)
@@ -205,8 +223,6 @@ app.put('/:new-incident', (req, res) => {
 	if(success) res.status(200).send(new_incident); 
 	else res.status(500).send(message); 
 }); 
-
-"SELECT * from incidents WHERE CONVERT(DATETIME, date+'T00:00:00.000') < date_time"
 
 console.log('Listening for connections on port '+port+'. '); 
 var server = app.listen(port); 
