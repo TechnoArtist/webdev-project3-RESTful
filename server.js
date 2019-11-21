@@ -41,15 +41,15 @@ replace old project code with new project code
 
 */
 
-var path = require('path');
-var express = require('express'); 
+var path       = require('path');
+var express    = require('express'); 
 var bodyParser = require('body-parser'); 
-var favicon = require('serve-favicon'); 
-var sqlite3 = require('sqlite3'); 
-var js2xml  = require("js2xmlparser");
+var favicon    = require('serve-favicon'); 
+var sqlite3    = require('sqlite3'); 
+var js2xml     = require("js2xmlparser");
 
-var port = 8000; 
-var public_dir = path.join(__dirname, 'public'); 
+var port        = 8000; 
+var public_dir  = path.join(__dirname, 'public'); 
 var db_filename = path.join(public_dir, 'stpaul_crime.sqlite3'); 
 
 var app = express(); 
@@ -79,27 +79,54 @@ app.get('/codes', (req, res) => {
 	//create a result object
 	var codes = {}; 
 	//for each valid code in the database, add it to the result as the key for the matching value incident_type. 
-	database.each("select * from CODES", (err, row) => {
-		 codes["C" + row.code] = row.incident_type;
-	}, () =>{
-		if(req.query.format == "json"){
-			res.type("json").send(codes);
+	if(req.query.codes == null){
+		database.each("select * from CODES", (err, row) => {
+			codes["C" + row.code] = row.incident_type;
+		}, () =>{
+			if(req.query.format == "json"){
+				res.type("json").send(codes);
+			}
+			else if(req.query.format == "xml"){
+				var codesXML = js2xml.parse("server",codes);
+				res.type("xml").send(codesXML);
+			}
+			else{
+				res.type("json").send(codes);
+			}
+			//send the result. 
+		}); 
+	}else{
+		var codeArray = [];
+		codeArray = req.query.codes.split(",");
+		for(let i = 0; i < codeArray.length; i++){
+			codeArray[i] = parseInt(codeArray[i],10);
 		}
-		else if(req.query.format == "xml"){
-			var codesXML = js2xml.parse("server",codes);
-			res.type("xml").send(codesXML);
-		}
-		else{
-			res.type("json").send(codes);
-		}
-		//send the result. 
-	}); 
-	
+		database.each("select * FROM codes", (err, row) => {
+			//codes["C" + row.code] = row.incident_type;
+			if(codeArray.includes(parseInt(row.code,10))){
+				codes["C" + row.code] = row.incident_type;
+			}//if
+			}, () =>{
+				console.log(codes);
+				//json response
+				if(req.query.format == "json"){
+					res.type("json").send(codes);
+				}
+				//xml response
+				else if(req.query.format == "xml"){
+					var codesXML = js2xml.parse("server",codes);
+					res.type("xml").send(codesXML);
+				}
+				//default respnse
+				else{
+					res.type("json").send(codes);
+				}
+			});// callback
+	}//else
+});//function	
 	//set the res type to json or xml, as selected
 	//TODO check the conditional
-	
-	
-}); 
+ 
 //GET neighborhoods: return list of neighborhood ID:name
 app.get('/neighborhoods', (req, res) => {
 	
@@ -107,21 +134,50 @@ app.get('/neighborhoods', (req, res) => {
 	var neighborhoods = {}; 
 	
 	//for each valid ID in the database, add it to the result as the key for the matching neighborhood name. 
-	database.each("select * from neighborhoods", (err, row) => {
-		neighborhoods["N" + row.neighborhood_number] = row.neighborhood_name; 
-	}, () =>{
-		if(req.query.format == "json"){
-			res.type("json").send(neighborhoods);
+	if(req.query.id == null){
+		database.each("select * from neighborhoods", (err, row) => {
+			neighborhoods["N" + row.neighborhood_number] = row.neighborhood_name; 
+		}, () =>{
+			if(req.query.format == "json"){
+				res.type("json").send(neighborhoods);
+			}
+			else if(req.query.format == "xml"){
+				var nieghborhoodsXML = js2xml.parse("server",neighborhoods);
+				res.type("xml").send(nieghborhoodsXML);
+			}
+			else{
+				res.type("json").send(neighborhoods);
+			}
+		}); 
+	}
+	else{
+		var neighborhoodArray = [];
+		neighborhoodArray = req.query.id.split(",");
+		for(let i = 0; i < neighborhoodArray.length; i++){
+			neighborhoodArray[i] = parseInt(neighborhoodArray[i],10);
 		}
-		else if(req.query.format == "xml"){
-			var nieghborhoodsXML = js2xml.parse("server",neighborhoods);
-			res.type("xml").send(nieghborhoodsXML);
-		}
-		else{
-			res.type("json").send(neighborhoods);
-		}
-	}); 
-	
+		console.log(neighborhoodArray);
+		database.each("select * FROM neighborhoods", (err, row) => {
+			//codes["C" + row.code] = row.incident_type;
+			if(neighborhoodArray.includes(parseInt(row.neighborhood_number,10))){
+				neighborhoods["N" + row.neighborhood_number] = row.neighborhood_number;
+			}//if
+			}, () =>{
+				//json response
+				if(req.query.format == "json"){
+					res.type("json").send(neighborhoods);
+				}
+				//xml response
+				else if(req.query.format == "xml"){
+					var codesXML = js2xml.parse("server",codes);
+					res.type("xml").send(nieghborhoodsXML);
+				}
+				//default respnse
+				else{
+					res.type("json").send(neighborhoods);
+				}
+			});// callback
+	}
 }); 
 //GET incidents: return list of incident ID:details (date, time, code, incident, police_grid, neighborhood_number, block)
 app.get('/incidents', (req, res) => {
@@ -205,8 +261,5 @@ app.put('/:new-incident', (req, res) => {
 	if(success) res.status(200).send(new_incident); 
 	else res.status(500).send(message); 
 }); 
-
-"SELECT * from incidents WHERE CONVERT(DATETIME, date+'T00:00:00.000') < date_time"
-
 console.log('Listening for connections on port '+port+'. '); 
 var server = app.listen(port); 
