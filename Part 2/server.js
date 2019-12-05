@@ -30,12 +30,16 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 //handle the main page
 app.get("./index.html", (req, res) => {
-
+    //The Map. 
+    //location search bar
+    //table of currently visible locations
+    //link to the About page
 }); 
 
 //handle the about page
 app.get("./about", (req, res) => {
-
+    //the main info is already in the html
+    //link to the Map page
 }); 
 
 //run the server
