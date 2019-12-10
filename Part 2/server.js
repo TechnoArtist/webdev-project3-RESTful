@@ -16,6 +16,7 @@ About Page:
 */
 
 //imports and global variables 
+var fs         = require('fs'); 
 var path       = require('path');
 var express    = require('express'); 
 var bodyParser = require('body-parser'); 
@@ -28,19 +29,52 @@ var app = express();
 app.use(express.static(public_dir)); 
 app.use(bodyParser.urlencoded({extended: true})); 
 
-//handle the main page
-app.get("./index.html", (req, res) => {
-    //The Map. 
-    //location search bar
-    //table of currently visible locations
-    //link to the About page
+//handle the main (map) page 
+app.get("/", (req, res) => {
+    console.log("attempting to get the main page")
+
+    ReadFile(path.join(public_dir, 'map.html')).then((template) => {
+        //The Map. 
+        //location search bar
+        //filter options? 
+        //table of currently visible locations
+        //to add something to the html: make an html comment, then template.replace(comment, new info). 
+        res.type('html').send(template.toString()); 
+
+    }, (err) => {
+        res.status(404).send("couldn't load the main (map) page. "+err); 
+
+    }); 
 }); 
 
 //handle the about page
-app.get("./about", (req, res) => {
-    //the main info is already in the html
-    //link to the Map page
+app.get("/about", (req, res) => {
+    console.log("attempting to get the about page"); 
+    
+    ReadFile(path.join(public_dir, 'about.html')).then((template) => {
+        //the main info is already in the html
+        res.type('html').send(template.toString()); 
+
+    }, (err) => {
+        res.status(404).send("couldn't load the about page. "+err); 
+
+    }); 
 }); 
+
+
+function ReadFile(filename) {
+    return new Promise((resolve, reject) => {
+        fs.readFile(filename, (err, data) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(data.toString());
+            }
+        });
+    });
+}
+
 
 //run the server
 console.log('Listening for connections on port '+port+'. '); 

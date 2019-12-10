@@ -1,0 +1,27 @@
+{
+    "name": "RESTful-webserver",
+    "version": "1.0.0",
+    "description": "RESTful Web Server using Node JS",
+    "author": {
+        "name": "Sheila Pietila",
+        "email": "piet9564@stthomas.edu"
+    },
+    "contributors": [
+        {
+            "name": "Sheila Pietila",
+            "email": "piet9564@stthomas.edu"
+        },
+        {
+            "name": "Tom Murphy",
+            "email": "murp4980@stthomas.edu"
+        }
+    ],
+    "main": "server.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/TechnoArtist/webdev-project3-RESTful.git"
+    },
+    "dependencies": {
+    
+    }
+}
