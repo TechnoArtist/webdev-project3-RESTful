@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+
+        <title>St Paul Crimes</title>
+        <!--leaflet.js stye sheet and librry scource--> 
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+        <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+        <!--vue.js library-->
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+        <!--js scource-->
+        <script type ='text/javascript' src = 'map.js'></script>
+
+    </head>
+        <style>
+        /* TODO make this its own file*/
+        #map {
+            width: 1080px;
+            height:720px;
+        }
+        </style>
+
+    </head>
+
+    <body onload="Init()">
+        <!--Link to about page, 1/2-->
+        <a href="/about">About</a>
+
+        <div id="map"></div>
+        <div id = 'app'>
+            <select v-model="searchType">
+                    <option disabled value="">Please select one</option>
+                    <option>Address</option>
+                    <option>Latitude and Longitude</option>
+            </select>
+            <input v-model="searchInput" placeholder='Search Here!'>
+            <button type="button" @click = 'findAdress'>
+                Submit
+            </button>
+            
+        </div>
+        </script>
+
+        <!--Link to about page, 2/2-->
+        <a href="/about">About</a>
+    </body>
+
+</html>

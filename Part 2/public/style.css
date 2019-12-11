@@ -11,6 +11,16 @@
     background-image: radial-gradient(circle at 0%, lightyellow, lightblue, lightblue, lightblue); 
 }
 
+.header {
+    font-weight: bold;
+    color: purple; 
+}
+
+.pretty_list {
+    border-style: inset; 
+    background-color: aquamarine;
+}
+
 .test {
     border-style: solid; 
     background-image: linear-gradient(silver, gray); 

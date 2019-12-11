@@ -13,6 +13,17 @@ About Page:
         Can natively embed or upload to YouTube and embed
     Six interesting findings that you discovered using your application
     Link to map page
+
+    
+TODO: 
+    Change port to run with dean (check part 1, too)
+    Merge map page with rest of server
+    Tom: Add your image and bio 
+        drop an image named "Tom.png" into the public folder
+        replace "test test" in about.html
+    Add demo video
+    Fill out tool descriptions 
+    Add interesting facts about St Paul crime
 */
 
 //imports and global variables 
@@ -30,15 +41,9 @@ app.use(express.static(public_dir));
 app.use(bodyParser.urlencoded({extended: true})); 
 
 //handle the main (map) page 
+//Note: if there is an index.html in the public folder, that file will trigger without this function. 
 app.get("/", (req, res) => {
-    console.log("attempting to get the main page")
-
     ReadFile(path.join(public_dir, 'map.html')).then((template) => {
-        //The Map. 
-        //location search bar
-        //filter options? 
-        //table of currently visible locations
-        //to add something to the html: make an html comment, then template.replace(comment, new info). 
         res.type('html').send(template.toString()); 
 
     }, (err) => {
@@ -49,10 +54,7 @@ app.get("/", (req, res) => {
 
 //handle the about page
 app.get("/about", (req, res) => {
-    console.log("attempting to get the about page"); 
-    
     ReadFile(path.join(public_dir, 'about.html')).then((template) => {
-        //the main info is already in the html
         res.type('html').send(template.toString()); 
 
     }, (err) => {
@@ -61,7 +63,7 @@ app.get("/about", (req, res) => {
     }); 
 }); 
 
-
+//read a file; for the purpose of sending html data to the client
 function ReadFile(filename) {
     return new Promise((resolve, reject) => {
         fs.readFile(filename, (err, data) => {
@@ -74,7 +76,6 @@ function ReadFile(filename) {
         });
     });
 }
-
 
 //run the server
 console.log('Listening for connections on port '+port+'. '); 
