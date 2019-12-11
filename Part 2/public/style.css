@@ -21,6 +21,11 @@
     background-color: aquamarine;
 }
 
+#map {
+    width: 1080px;
+    height:720px;
+}
+
 .test {
     border-style: solid; 
     background-image: linear-gradient(silver, gray); 

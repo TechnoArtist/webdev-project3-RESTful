@@ -17,13 +17,13 @@ About Page:
     
 TODO: 
     Change port to run with dean (check part 1, too)
-    Merge map page with rest of server
     Tom: Add your image and bio 
         drop an image named "Tom.png" into the public folder
         replace "test test" in about.html
     Add demo video
     Fill out tool descriptions 
     Add interesting facts about St Paul crime
+    Map: database searching
 */
 
 //imports and global variables 
