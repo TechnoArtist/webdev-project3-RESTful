@@ -198,18 +198,17 @@ app.get('/incidents', (req, res) => {
 	console.log(sql); 
 	
 	//put the applicable request options into the sql query
-	if(Object.entries(req.query).length != 0) 	sql = sql + "WHERE "; 
-	if(req.query.start_date 	!= null) 		sql = sql + "AND date_time > CONVERT(DATETIME, "+req.query.start_date+"T00:00:00.000"+") "; 
-	if(req.query.end_date 		!= null) 		sql = sql + "AND date_time < CONVERT(DATETIME, "+req.query.end_date+"T00:00:00.000"+") "; 
-	if(req.query.code 			!= null) 		sql = sql + "AND code = "+req.query.code+" "; 
-	if(req.query.grid 			!= null) 		sql = sql + "AND police_grid = "+req.query.grid+" "; 
-	if(req.query.limit 			!= null) 		sql = sql + "AND LIMIT "+req.query.limit; 
-	else sql = sql + "LIMIT 10,000 "; 
+	if(req.query.start_date 	!= null) 		sql = sql + "AND date_time > '"+req.query.start_date+"' "; 
+	if(req.query.end_date 		!= null) 		sql = sql + "AND date_time < '"+req.query.end_date+"' "; 
+	if(req.query.code 			!= null) 		sql = sql + "AND code IN ("+req.query.code+") "; 
+	if(req.query.grid 			!= null) 		sql = sql + "AND police_grid IN ("+req.query.grid+") "; 
+	if(req.query.limit 			!= null) 		sql = sql + "LIMIT "+req.query.limit; 
+	else sql = sql + "LIMIT 1000 "; 
 	
 	console.log(sql); 
 	
 	//don't start the WHERE with an AND
-	sql.replace("AND", ""); 
+	sql = sql.replace("AND ", "WHERE "); 
 	
 	console.log(sql); 
 	
@@ -283,5 +282,13 @@ app.put('/:new-incident', (req, res) => {
 	if(success) res.status(200).send(new_incident); 
 	else res.status(500).send(message); 
 }); 
+
+
+//test sql output
+database.all("SELECT * FROM incidents LIMIT 10", (err, rows) => {
+	console.log(rows[0]); 
+}); 
+
+
 console.log('Listening for connections on port '+port+'. '); 
 var server = app.listen(port); 
