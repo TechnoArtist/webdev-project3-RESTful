@@ -13,7 +13,7 @@ Outline:
 		 ?end_date=[yyyy-mm-dd]
 		 ?code=[comma separated list of codes to include]
 		 ?grid=[comma separated list of police grids to include]
-		 ?limit=[max number of incidents to display], default=10 000
+		 ?limit=[max number of incidents to display], default=10000
 		 ?format=[json|xml], default=json
 	PUT /new-incident (upload or reject incident data: case_number, date, time, code, incident, police_grid, neighborhood_number, block)
 
@@ -32,11 +32,6 @@ Database outline:
         police_grid (INTEGER): police grid number where incident occurred
         neighborhood_number (INTEGER): neighborhood id where incident occurred
         block (TEXT): approximate address where incident occurred
-
-TODO: 
-finish /incidents
-	test whether the sql statement is working as intended
-	figure out why the sql.replace("AND", ""); isn't working
 
 */
 
@@ -122,9 +117,7 @@ app.get('/codes', (req, res) => {
 				}
 			});// callback
 	}//else
-});//function	
-	//set the res type to json or xml, as selected
-	//TODO check the conditional
+});//app.get('/codes')
  
 //GET neighborhoods: return list of neighborhood ID:name
 app.get('/neighborhoods', (req, res) => {
@@ -195,22 +188,16 @@ app.get('/incidents', (req, res) => {
 	//create an sql string
 	sql = "SELECT * FROM incidents "; 
 	
-	console.log(sql); 
-	
 	//put the applicable request options into the sql query
 	if(req.query.start_date 	!= null) 		sql = sql + "AND date_time > '"+req.query.start_date+"' "; 
 	if(req.query.end_date 		!= null) 		sql = sql + "AND date_time < '"+req.query.end_date+"' "; 
 	if(req.query.code 			!= null) 		sql = sql + "AND code IN ("+req.query.code+") "; 
 	if(req.query.grid 			!= null) 		sql = sql + "AND police_grid IN ("+req.query.grid+") "; 
 	if(req.query.limit 			!= null) 		sql = sql + "LIMIT "+req.query.limit; 
-	else sql = sql + "LIMIT 1000 "; 
-	
-	console.log(sql); 
+	else sql = sql + "LIMIT 10000 "; 
 	
 	//don't start the WHERE with an AND
 	sql = sql.replace("AND ", "WHERE "); 
-	
-	console.log(sql); 
 	
 	//for each valid ID in the database (between dates, matching code/grid, until max...),   
 	database.each(sql, (err, row) => {
@@ -281,12 +268,6 @@ app.put('/:new-incident', (req, res) => {
 	//send a success message
 	if(success) res.status(200).send(new_incident); 
 	else res.status(500).send(message); 
-}); 
-
-
-//test sql output
-database.all("SELECT * FROM incidents LIMIT 10", (err, rows) => {
-	console.log(rows[0]); 
 }); 
 
 
