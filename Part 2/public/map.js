@@ -32,7 +32,7 @@ function Init(){
 
 }
 function findAdress(){
-      // search if the search type is an address
+    // search if the search type is an address
     if(app.searchType == 'Address'){
         getJSON('https://nominatim.openstreetmap.org/search?q=' + app.searchInput + '&format=json',function(err, data) {
             var lat = data[0].lat;
@@ -57,7 +57,7 @@ function findAdress(){
         L.marker([coordinates[0], coordinates[1]], {title : app.searchInput}).addTo(map);
     }
     else{
-        alert('Please pick a search type for you search to work. Thank you!');
+        alert('Please pick a search type for your search to work. Thank you!');
     }
   
 }

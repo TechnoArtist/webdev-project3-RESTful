@@ -24,6 +24,7 @@ TODO:
     Fill out tool descriptions 
     Add interesting facts about St Paul crime
     Map: database searching
+    Map: table of crimes
 */
 
 //imports and global variables 
