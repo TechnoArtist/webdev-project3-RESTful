@@ -17,9 +17,8 @@ About Page:
     
 TODO: 
     Change port to run with dean (check part 1, too)
-    Tom: Add your image and bio 
+    Tom: Add your image 
         drop an image named "Tom.png" into the public folder
-        replace "test test" in about.html
     Add demo video
     Fill out tool descriptions 
     Add interesting facts about St Paul crime
@@ -49,6 +48,17 @@ app.get("/", (req, res) => {
 
     }, (err) => {
         res.status(404).send("couldn't load the main (map) page. "+err); 
+
+    }); 
+}); 
+
+//handle the map page 
+app.get("/map", (req, res) => {
+    ReadFile(path.join(public_dir, 'map.html')).then((template) => {
+        res.type('html').send(template.toString()); 
+
+    }, (err) => {
+        res.status(404).send("couldn't load the map page. "+err); 
 
     }); 
 }); 

@@ -42,7 +42,7 @@ var favicon    = require('serve-favicon');
 var sqlite3    = require('sqlite3'); 
 var js2xml     = require("js2xmlparser");
 
-var port        = 8000; 
+var port        = 8037; 
 var public_dir  = path.join(__dirname, 'public'); 
 var db_filename = path.join(public_dir, 'stpaul_crime.sqlite3'); 
 
@@ -61,7 +61,10 @@ var database = new sqlite3.Database(db_filename, sqlite3.OPEN_READWRITE, (err) =
 }); 
 
 //print one row of the incidents table, for formatting reference
-//database.get("select * from incidents", (err, data) => { console.log(data); }); 
+database.get("select * from incidents", (err, data) => { 
+	if(err) console.log(err); 
+	else console.log(data); 
+}); 
 
 //GET codes: return list of codes:incident types
 app.get('/codes', (req, res) => {

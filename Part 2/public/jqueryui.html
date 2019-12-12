@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!-- saved from url=(0626)https://a7377-2083251.cluster79.canvas-user-content.com/courses/7377~25785/files/7377~2083251/course%20files/unfiled/jqueryui.html?download=1&inline=1&sf_verifier=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoiNzM3NzAwMDAwMDAwMzQzODUiLCJyb290X2FjY291bnRfaWQiOiI3Mzc3MDAwMDAwMDAwMDAwMSIsIm9hdXRoX2hvc3QiOiJzdHRob21hcy5pbnN0cnVjdHVyZS5jb20iLCJyZXR1cm5fdXJsIjpudWxsLCJmYWxsYmFja191cmwiOiJodHRwczovL3N0dGhvbWFzLmluc3RydWN0dXJlLmNvbS9jb3Vyc2VzLzI1Nzg1L2ZpbGVzLzIwODMyNTEvZG93bmxvYWQ_ZmFsbGJhY2tfdHM9MTU3NjE2MTQzOCIsImV4cCI6MTU3NjE2MTczOH0.P4KwifVnu1PqCrtb8UmXpdWsod2na1hzFte4q64v9wQ9yVXdFhFCElbMEIltuz-sDcNGpTcMEWI5Q8syxIi9zA -->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Prompt Test</title>
+        <link rel="stylesheet" href="./jqueryui_files/jquery-ui.css">
+        <script type="application/javascript" src="./jqueryui_files/jquery-3.4.1.min.js"></script>
+        <script type="application/javascript" src="./jqueryui_files/jquery-ui.min.js"></script>
+        <!-- Prompt JavaScript - this can be moved to a separate .js file if desired -->
+        <script type="application/javascript">
+            function Prompt() {
+                $("#dialog-form").dialog({
+                    autoOpen: true,
+                    modal: true,
+                    width: "360px",
+                    buttons: {
+                        "Ok": function() {
+                            var prompt_input = $("#prompt_input");
+                            Init(prompt_input.val());
+                            $(this).dialog("close");
+                        },
+                        "Cancel": function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+            }
+
+            function Init(crime_api_url) {
+                console.log(crime_api_url);
+            }
+        </script>
+        <!-- End: Prompt JavaScript -->
+    </head>
+    <body onload="Prompt()">
+        <!--Links to map and about pages-->
+        <a href="/map">Map</a>
+        <a href="/about">About</a>
+
+        <!-- Prompt -->
+        
+        <!-- End: Prompt -->
+
+        <div tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons ui-draggable ui-resizable" aria-describedby="dialog-form" aria-labelledby="ui-id-1" style="position: absolute; height: auto; width: 360px; top: 394.526px; left: 758.8px; z-index: 101;">
+            <div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle">
+                <span id="ui-id-1" class="ui-dialog-title">&nbsp;</span>
+                <button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="Close">
+                    <span class="ui-button-icon ui-icon ui-icon-closethick"></span>
+                    <span class="ui-button-icon-space"></span>
+                    Close
+                </button>
+            </div>
+            <div id="dialog-form" class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 19.053px; max-height: none; height: auto;">
+                <label for="name">
+                    URL for St. Paul Crime API:
+                </label>
+                <input type="text" id="prompt_input" class="text ui-widget-content ui-corner-all" style="width: 320px;">
+            </div>
+            <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+                <div class="ui-dialog-buttonset">
+                    <button type="button" class="ui-button ui-corner-all ui-widget">
+                        Ok
+                    </button>
+                    <button type="button" class="ui-button ui-corner-all ui-widget">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+            <div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div>
+            <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div>
+            <div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div>
+            <div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div>
+            <div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div>
+            <div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div>
+            <div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div>
+            <div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div>
+        </div>
+        <div class="ui-widget-overlay ui-front" style="z-index: 100;"></div>
+    </body>
+</html>
