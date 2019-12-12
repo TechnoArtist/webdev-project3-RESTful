@@ -16,11 +16,9 @@ About Page:
 
     
 TODO: 
-    Change port to run with dean (check part 1, too)
     Tom: Add your image 
         drop an image named "Tom.png" into the public folder
     Add demo video
-    Fill out tool descriptions 
     Add interesting facts about St Paul crime
     Map: database searching
     Map: table of crimes
@@ -32,7 +30,7 @@ var path       = require('path');
 var express    = require('express'); 
 var bodyParser = require('body-parser'); 
 
-var port        = 8000; 
+var port        = parseInt(process.argv[2]); 
 var public_dir  = path.join(__dirname, 'public'); 
 
 //create the server

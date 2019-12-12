@@ -12,6 +12,12 @@ function Init(){
         data: {
             searchInput: "",
             searchType: ''
+        }, 
+        computed: {
+            //TODO write this to tell if a table row should be shown
+            visible: function() {
+                return true; 
+            }
         }
     });
     //mapstuff
