@@ -63,7 +63,10 @@ var database = new sqlite3.Database(db_filename, sqlite3.OPEN_READWRITE, (err) =
 }); 
 
 //print one row of the incidents table, for formatting reference
-//database.get("select * from incidents", (err, data) => { console.log(data); }); 
+database.get("select * from incidents", (err, data) => { 
+	if(err) console.log(err); 
+	else console.log(data); 
+}); 
 
 //GET codes: return list of codes:incident types
 app.get('/codes', (req, res) => {
