@@ -77,9 +77,16 @@ app.get('/codes', (req, res) => {
 	
 	//create a result object
 	var codes = {}; 
+	
+	//create an sql string
+	sql = "SELECT * FROM codes "; 
+	
+	//put the applicable request options into the sql query
+	if(req.query.neighborhood_number != null) sql = sql + "WHERE code IN (" + req.query.code +") "; 
+	
 	//for each valid code in the database, add it to the result as the key for the matching value incident_type. 
 	if(req.query.codes == null){
-		database.each("select * from CODES", (err, row) => {
+		database.each(sql, (err, row) => {
 			codes["C" + row.code] = row.incident_type;
 		}, () =>{
 			if(req.query.format == "json"){
@@ -100,7 +107,7 @@ app.get('/codes', (req, res) => {
 		for(let i = 0; i < codeArray.length; i++){
 			codeArray[i] = parseInt(codeArray[i],10);
 		}
-		database.each("select * FROM codes", (err, row) => {
+		database.each(sql, (err, row) => {
 			//codes["C" + row.code] = row.incident_type;
 			if(codeArray.includes(parseInt(row.code,10))){
 				codes["C" + row.code] = row.incident_type;
@@ -130,9 +137,15 @@ app.get('/neighborhoods', (req, res) => {
 	//create a result object
 	var neighborhoods = {}; 
 	
+	//create an sql string
+	sql = "SELECT * FROM neighborhoods "; 
+	
+	//put the applicable request options into the sql query
+	if(req.query.neighborhood_number != null) sql = sql + "WHERE neighborhood_number IN (" + req.query.neighborhood_number +") "; 
+	
 	//for each valid ID in the database, add it to the result as the key for the matching neighborhood name. 
 	if(req.query.id == null){
-		database.each("select * from neighborhoods", (err, row) => {
+		database.each(sql, (err, row) => {
 			neighborhoods["N" + row.neighborhood_number] = row.neighborhood_name; 
 		}, () =>{
 			if(req.query.format == "json"){
@@ -154,7 +167,7 @@ app.get('/neighborhoods', (req, res) => {
 			neighborhoodArray[i] = parseInt(neighborhoodArray[i],10);
 		}
 		console.log(neighborhoodArray);
-		database.each("select * FROM neighborhoods", (err, row) => {
+		database.each(sql, (err, row) => {
 			//codes["C" + row.code] = row.incident_type;
 			if(neighborhoodArray.includes(parseInt(row.neighborhood_number,10))){
 				neighborhoods["N" + row.neighborhood_number] = row.neighborhood_name;
