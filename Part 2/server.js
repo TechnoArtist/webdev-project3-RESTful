@@ -40,7 +40,7 @@ var public_dir  = path.join(__dirname, 'public');
 var app = express(); 
 app.use(express.static(public_dir)); 
 app.use(bodyParser.urlencoded({extended: true})); 
-app.use(cors);
+app.use(cors());
 
 //handle the main (map) page 
 //Note: if there is an index.html in the public folder, that file will trigger without this function. 

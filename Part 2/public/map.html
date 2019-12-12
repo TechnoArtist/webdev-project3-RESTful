@@ -34,29 +34,31 @@
                 Submit
             </button>
             <!--The table-->
-            <table>
-                <tr>
-                    <th>Case Number</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Code</th>
-                    <th>Incident</th>
-                    <th>Police Grid</th>
-                    <th>Neighborhood Number</th>
-                    <th>Block</th>
-                </tr>
-                <!--TODO create variable "incidents" from our restful server /incidents-->
-                <tr v-for="entry in incidents">
-                    <td>{{ entry }}</td>
-                    <td>{{ entry.date }}</td>
-                    <td>{{ entry.time }}</td>
-                    <td>{{ entry.code }}</td>
-                    <td>{{ entry.incident }}</td>
-                    <td>{{ entry.police_grid }}</td>
-                    <td>{{ entry.neighborhood_number }}</td>
-                    <td>{{ entry.block }}</td>
-                </tr>
-            </table>
+            <div style = "height:600px; width:1080px; overflow:scroll;">
+                <table >
+                    <tr>
+                        <th>Case Number</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Code</th>
+                        <th>Incident</th>
+                        <th>Police Grid</th>
+                        <th>Neighborhood Number</th>
+                        <th>Block</th>
+                    </tr>
+                    <!--TODO create variable "incidents" from our restful server /incidents-->
+                    <tr v-for="entry in incidents">
+                        <td>{{ entry.case_number }}</td>
+                        <td>{{ entry.date }}</td>
+                        <td>{{ entry.time }}</td>
+                        <td>{{ entry.code }}</td>
+                        <td>{{ entry.incident }}</td>
+                        <td>{{ entry.police_grid }}</td>
+                        <td>{{ entry.neighborhood_number }}</td>
+                        <td>{{ entry.block }}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
         <!--Link to about page, 2/2-->
         <!--a href="/about">About</a-->
