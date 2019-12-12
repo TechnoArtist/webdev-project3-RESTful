@@ -22,6 +22,7 @@
         "url": "https://github.com/TechnoArtist/webdev-project3-RESTful.git"
     },
     "dependencies": {
-    
+        "cors": "^2.8.5",
+        "express": "^4.17.1"
     }
 }

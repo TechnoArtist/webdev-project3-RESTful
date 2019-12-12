@@ -33,34 +33,33 @@
             <button type="button" @click = 'findAddress'>
                 Submit
             </button>
-            
-        </div>
-        <!--The table-->
-        <div>
-            <table style="border: dotted; border-color:darkgrey">
-                <tr>
-                    <th>Case Number</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <!--th>~~Code~~ Incident Type</th-->
-                    <th>Incident</th>
-                    <th>Police Grid</th>
-                    <!--th>Neighborhood ~~Number~~ Name</th-->
-                    <th>Block</th>
-                </tr>
-                <!--TODO create variable "incidents" from our restful server /incidents-->
-                <!--TODO v-if="within current map bounds"-->
-                <tr v-for="(crime, key) in incidents">
-                    <td>{{ key }}</td>
-                    <td>{{ crime.date }}</td>
-                    <td>{{ crime.time }}</td>
-                    <!--td>{{ crime.code }}</td-->
-                    <td>{{ crime.incident }}</td>
-                    <td>{{ crime.police_grid }}</td>
-                    <!--td>{{ crime.neighborhood_number }}</td-->
-                    <td>{{ crime.block }}</td>
-                </tr>
-            </table>
+            <!--The table-->
+            <div class=scrollable>
+                <table>
+                    <tr>
+                        <th>Case Number</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <!--th>~~Code~~ Incident Type</th-->
+                        <th>Incident</th>
+                        <th>Police Grid</th>
+                        <!--th>Neighborhood ~~Number~~ Name</th-->
+                        <th>Block</th>
+                    </tr>
+                    <!--TODO create variable "incidents" from our restful server /incidents-->
+                    <!--TODO v-if="within current map bounds"-->
+                    <tr v-for="(crime, key) in incidents">
+                        <td>{{ key }}</td>
+                        <td>{{ crime.date }}</td>
+                        <td>{{ crime.time }}</td>
+                        <!--td>{{ crime.code }}</td-->
+                        <td>{{ crime.incident }}</td>
+                        <td>{{ crime.police_grid }}</td>
+                        <!--td>{{ crime.neighborhood_number }}</td-->
+                        <td>{{ crime.block }}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
         <!--Link to about page, 2/2-->
         <!--a href="/about">About</a-->

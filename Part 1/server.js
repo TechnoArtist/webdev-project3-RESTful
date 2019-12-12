@@ -41,12 +41,14 @@ var bodyParser = require('body-parser');
 var favicon    = require('serve-favicon'); 
 var sqlite3    = require('sqlite3'); 
 var js2xml     = require("js2xmlparser");
+var cors       = require('cors');
 
-var port        = parseInt(process.argv[2]); 
+var port        = 8042; 
 var public_dir  = path.join(__dirname, 'public'); 
 var db_filename = path.join(public_dir, 'stpaul_crime.sqlite3'); 
 
-var app = express(); 
+var app = express();
+app.use(cors()); 
 app.use(express.static(public_dir)); 
 app.use(bodyParser.urlencoded({extended: true})); 
 app.use(favicon(path.join(public_dir,'favicon.ico')));
@@ -192,11 +194,12 @@ app.get('/incidents', (req, res) => {
 	sql = "SELECT * FROM incidents "; 
 	
 	//put the applicable request options into the sql query
-	if(req.query.start_date 	!= null) 		sql = sql + "AND date_time > '"+req.query.start_date+"' "; 
-	if(req.query.end_date 		!= null) 		sql = sql + "AND date_time < '"+req.query.end_date+"' "; 
-	if(req.query.code 			!= null) 		sql = sql + "AND code IN ("+req.query.code+") "; 
-	if(req.query.grid 			!= null) 		sql = sql + "AND police_grid IN ("+req.query.grid+") "; 
-	if(req.query.limit 			!= null) 		sql = sql + "LIMIT "+req.query.limit; 
+	if(req.query.start_date 	     != null) 		sql = sql + "AND date_time > '"+req.query.start_date+"' "; 
+	if(req.query.end_date 		     != null) 		sql = sql + "AND date_time < '"+req.query.end_date+"' "; 
+	if(req.query.code 			     != null) 		sql = sql + "AND code IN ("+req.query.code+") "; 
+	if(req.query.grid 			     != null) 		sql = sql + "AND police_grid IN ("+req.query.grid+") ";
+	if(req.query.neighborhood_number != null)       sql = sql + "AND neighborhood_number IN (" + req.query.neighborhood_number +") ";  
+	if(req.query.limit 			     != null) 		sql = sql + "LIMIT "+req.query.limit; 
 	else sql = sql + "LIMIT 10000 "; 
 	
 	//don't start the WHERE with an AND

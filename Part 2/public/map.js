@@ -11,12 +11,12 @@ function Init(){
         el: "#app",
         data: {
             searchInput: "",
-            searchType: ''
-        }, 
-        computed: {
-            //TODO write this to tell if a table row should be shown
-            visible: function() {
-                return true; 
+            searchType: '',
+            incidents: '', 
+            computed: {
+                visible: function() {
+                    
+                }
             }
         }
     });
@@ -34,7 +34,7 @@ function Init(){
     });
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',{}).addTo(map);
     L.marker([44.949642, -93.093124],{title: 'Saint Paul'}).addTo(map);
-
+    getIncidents();
 
 }
 function findAddress(){
@@ -68,7 +68,11 @@ function findAddress(){
     }
   
 }
-
+function getIncidents(){
+    getJSON('http://cisc-dean.stthomas.edu:8042/incidents?start_date=2019-10-01&end_date=2019-10-31', function(err,data){
+        app.incidents = data;
+   }); 
+}
 var getJSON = function(url, callback) {
 //function to get the json object from the api
     var xhr = new XMLHttpRequest();
