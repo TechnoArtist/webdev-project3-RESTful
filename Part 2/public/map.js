@@ -31,7 +31,7 @@ function Init(){
 
 
 }
-function findAdress(){
+function findAddress(){
     // search if the search type is an address
     if(app.searchType == 'Address'){
         getJSON('https://nominatim.openstreetmap.org/search?q=' + app.searchInput + '&format=json',function(err, data) {
@@ -50,6 +50,7 @@ function findAdress(){
 
         });
     }
+    //search if the input is a coordinate
     else if(app.searchType == 'Latitude and Longitude'){
         var coordinates = [];
         coordinates = app.searchInput.split(',');
