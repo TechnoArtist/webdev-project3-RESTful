@@ -21,7 +21,6 @@ TODO:
     Add demo video
     Add interesting facts about St Paul crime
     Map: database searching
-    Map: table of crimes
 */
 
 //imports and global variables 

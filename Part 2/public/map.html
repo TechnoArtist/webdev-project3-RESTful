@@ -40,10 +40,10 @@
                         <th>Case Number</th>
                         <th>Date</th>
                         <th>Time</th>
-                        <!--th>~~Code~~ Incident Type</th-->
+                        <th>Incident Type</th>
                         <th>Incident</th>
                         <th>Police Grid</th>
-                        <!--th>Neighborhood ~~Number~~ Name</th-->
+                        <th>Neighborhood Name</th>
                         <th>Block</th>
                     </tr>
                     <!--TODO create variable "incidents" from our restful server /incidents-->
@@ -52,10 +52,10 @@
                         <td>{{ key }}</td>
                         <td>{{ crime.date }}</td>
                         <td>{{ crime.time }}</td>
-                        <!--td>{{ crime.code }}</td-->
+                        <td>{{ codetypes['C'+crime.code] }}</td>
                         <td>{{ crime.incident }}</td>
                         <td>{{ crime.police_grid }}</td>
-                        <!--td>{{ crime.neighborhood_number }}</td-->
+                        <td>{{ neighborhoods['N'+crime.neighborhood_number] }}</td>
                         <td>{{ crime.block }}</td>
                     </tr>
                 </table>

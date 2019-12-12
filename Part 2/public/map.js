@@ -13,6 +13,8 @@ function Init(){
             searchInput: "",
             searchType: '',
             incidents: '', 
+            neighborhoods: '', 
+            codetypes: '', 
             computed: {
                 visible: function() {
                     
@@ -35,6 +37,8 @@ function Init(){
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',{}).addTo(map);
     L.marker([44.949642, -93.093124],{title: 'Saint Paul'}).addTo(map);
     getIncidents();
+    getNeighborhoodNames();
+    getCodeTypes(); 
 
 }
 function findAddress(){
@@ -72,6 +76,16 @@ function getIncidents(){
     getJSON('http://cisc-dean.stthomas.edu:8042/incidents?start_date=2019-10-01&end_date=2019-10-31', function(err,data){
         app.incidents = data;
    }); 
+}
+function getNeighborhoodNames(){
+    getJSON('http://cisc-dean.stthomas.edu:8042/neighborhoods', function(err, data) {
+        app.neighborhoods = data; 
+    }); 
+}
+function getCodeTypes(){
+    getJSON('http://cisc-dean.stthomas.edu:8042/codes', function(err, data) {
+        app.codetypes = data; 
+    }); 
 }
 var getJSON = function(url, callback) {
 //function to get the json object from the api
