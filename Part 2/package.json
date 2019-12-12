@@ -21,7 +21,5 @@
         "type": "git",
         "url": "https://github.com/TechnoArtist/webdev-project3-RESTful.git"
     },
-    "dependencies": {
-    
-    }
+    "dependencies": {}
 }
