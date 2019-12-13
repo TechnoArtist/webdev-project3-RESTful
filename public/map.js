@@ -77,38 +77,48 @@ function findAddress(){
     }
    
 }
-function showMarkerButton(incident, date, time, code, block){
+function showMarkerButton(incident, date, time, type, block) {
     block.replace('X', '1');
     getJSON('https://nominatim.openstreetmap.org/search?q=' + block + " Saint Paul " + '&format=json',function(err, data) {
-        L.marker([data[0].lat, data[0].lon], {title: 'Incident: ' + incident + '\nDate: ' + date + '\nTime: ' + time + '\nCode: ' + code}).addTo(map);
+        L.marker([data[0].lat, data[0].lon], {title: 'Incident: ' + incident + '\nDate: ' + date + '\nTime: ' + time + '\nIncident Type: ' + type}).addTo(map);
     });
 }
 function updateLocation(){
+    //If searching by address, just send the map's center coordinates. 
     if(app.searchType == 'Latitude and Longitude'){
         app.currentLocation = map.getCenter();
     }
+    //If searching by address, convert the map's center coordinates to a set of addresses, and send that. 
     else{
         getJSON('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + map.getCenter().lat + '&lon=' + map.getCenter().lng, function(err,data){
             app.currentLocation = Object.values(data.address);
         });
     }
+    
+    //loop through each neighborhood...
     for(let i = 0; i < 17; i++){
+        //if it's inside the visible map, set it to 'visible'. 
         if(map.getBounds().contains(neighborhoods.neighborhood[i].LatLng)){
             neighborhoods.neighborhood[i].visible = true;
-        }
+        } //else, not visible. 
         else{
             neighborhoods.neighborhood[i].visible = false;
         }
-    }
+    }//for
+    
+    //retrieve the list of incidents from our restful crime server, and... 
     getJSON('http://cisc-dean.stthomas.edu:8042/incidents?start_date=2019-10-01&end_date=2019-10-31', function(err,data){
         for(key in data){
-            if(data.hasOwnProperty(key)){
+            if(data.hasOwnProperty(key)){//??
                 if(neighborhoods.neighborhood[data[key].neighborhood_number-1].visible == false){
+                    //for each row in the incidents table, if it's not currently visible, delete it from the temporary list of incidents. 
                     delete data[key];
                     console.log('deleted');
                 }//if
             }//if
         }//for
+        
+        //Save the temporary list of incidents (the list from the st paul crime api, minus everything except what is also visible in the neighborhoods set). 
         app.incidents = data;
    });//callback
 }
@@ -165,6 +175,8 @@ function getCodeTypes(){
         app.codetypes = data; 
     }); 
 }
+//TODO rewrite the above functions such that they make the replacements here, instead of scattered through the code? 
+
 
 var getJSON = function(url, callback) {
 //function to get the json object from the api
