@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Prompt Test</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script type="application/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script type="application/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <!-- Prompt JavaScript - this can be moved to a separate .js file if desired -->
+    <script type="application/javascript">
+        function Prompt() {
+            $("#dialog-form").dialog({
+                autoOpen: true,
+                modal: true,
+                width: "360px",
+                buttons: {
+                    "Ok": function() {
+                        var prompt_input = $("#prompt_input");
+                        Init(prompt_input.val());
+                        $(this).dialog("close");
+                    },
+                    "Cancel": function() {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        }
+
+        function Init(crime_api_url) {
+            console.log(crime_api_url);
+        }
+    </script>
+    <!-- End: Prompt JavaScript -->
+</head>
+<body onload="Prompt()">
+
+    <!-- Prompt -->
+    <div id="dialog-form">
+        <label for="name">URL for St. Paul Crime API:</label>
+        <input type="text" id="prompt_input" class="text ui-widget-content ui-corner-all" style="width: 320px;"/>
+    </div>
+    <!-- End: Prompt -->
+</body>
+</html>
