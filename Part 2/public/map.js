@@ -16,6 +16,7 @@ function Init(){
             neighborhoods: '', 
             codetypes: '', 
             currentLocation: '',
+            popUpMarkers: '',
             computed: {
                 visible: function() {
                     
@@ -36,7 +37,11 @@ function Init(){
 
     });
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',{}).addTo(map);
-    
+    map.on('moveend', function(ev){
+        updateLocation();
+    });
+
+
     getIncidents();
     getNeighborhoodNames();
     getCodeTypes(); 
@@ -72,29 +77,60 @@ function findAddress(){
     }
    
 }
+function showMarkerButton(incident, date, time, code, block){
+    block.replace('X', '1');
+    getJSON('https://nominatim.openstreetmap.org/search?q=' + block + " Saint Paul " + '&format=json',function(err, data) {
+        L.marker([data[0].lat, data[0].lon], {title: 'Incident: ' + incident + '\nDate: ' + date + '\nTime: ' + time + '\nCode: ' + code}).addTo(map);
+    });
+}
 function updateLocation(){
     if(app.searchType == 'Latitude and Longitude'){
         app.currentLocation = map.getCenter();
     }
+    else{
+        getJSON('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + map.getCenter().lat + '&lon=' + map.getCenter().lng, function(err,data){
+            app.currentLocation = Object.values(data.address);
+        });
+    }
+    for(let i = 0; i < 17; i++){
+        if(map.getBounds().contains(neighborhoods.neighborhood[i].LatLng)){
+            neighborhoods.neighborhood[i].visible = true;
+        }
+        else{
+            neighborhoods.neighborhood[i].visible = false;
+        }
+    }
+    getJSON('http://cisc-dean.stthomas.edu:8042/incidents?start_date=2019-10-01&end_date=2019-10-31', function(err,data){
+        for(key in data){
+            if(data.hasOwnProperty(key)){
+                if(neighborhoods.neighborhood[data[key].neighborhood_number-1].visible == false){
+                    delete data[key];
+                    console.log('deleted');
+                }//if
+            }//if
+        }//for
+        app.incidents = data;
+   });//callback
 }
+"Summit/University"
 var neighborhoods = { neighborhood :[
-    {"name" : "Conway/Battlecreek/Highwood", "number" : 1,  "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.945212, -93.028334)},
-    {"name" : "Greater East Side",           "number" : 2,  "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.977230, -93.024469)},
-    {"name" : "West Side",                   "number" : 3,  "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.930275, -93.091862)},
-    {"name" : "Dayton's Bluff",              "number" : 4,  "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.977515, -93.065958)},
-    {"name" : "Payne/Phalen",                "number" : 5,  "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.977506, -93.065955)},
-    {"name" : "North End",                   "number" : 6,  "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.977382, -93.105931)},
-    {"name" : "Summit/University",           "number" : 7,  "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.948847, -93.126256)},
-    {"name" : "Thomas/Dale(Frogtown)",       "number" : 8,  "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.959419, -93.126310)},
-    {"name" : "West Seventh",                "number" : 9,  "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.927528, -93.127019)},
-    {"name" : "Como",                        "number" : 10, "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.982252, -93.148269)},
-    {"name" : "Hamline/Midway",              "number" : 11, "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.962871, -93.167019)},
-    {"name" : "St. Anthony",                 "number" : 12, "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.969933, -93.197514)},
-    {"name" : "Union Park",                  "number" : 13, "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.948404, -93.174634)},
-    {"name" : "Macalester-Groveland",        "number" : 14, "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.933938, -93.173002)},
-    {"name" : "Highland",                    "number" : 15, "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.915371, -93.172227)},
-    {"name" : "Summit Hill",                 "number" : 16, "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.937250, -93.135795)},
-    {"name" : "Capitol River",               "number" : 17, "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.949858, -93.095771)}
+    {"name" : "Conway/Battlecreek/Highwood", "number" : 1,  "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.945212, -93.028334)},
+    {"name" : "Greater East Side",           "number" : 2,  "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.977230, -93.024469)},
+    {"name" : "West Side",                   "number" : 3,  "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.930275, -93.091862)},
+    {"name" : "Dayton's Bluff",              "number" : 4,  "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.977515, -93.065958)},
+    {"name" : "Payne/Phalen",                "number" : 5,  "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.977506, -93.065955)},
+    {"name" : "North End",                   "number" : 6,  "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.977382, -93.105931)},
+    {"name" : "Thomas/Dale(Frogtown)",       "number" : 7,  "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.948847, -93.126256)},
+    {"name" : "Summit/University",           "number" : 8,  "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.959419, -93.126310)},
+    {"name" : "West Seventh",                "number" : 9,  "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.927528, -93.127019)},
+    {"name" : "Como",                        "number" : 10, "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.982252, -93.148269)},
+    {"name" : "Hamline/Midway",              "number" : 11, "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.962871, -93.167019)},
+    {"name" : "St. Anthony",                 "number" : 12, "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.969933, -93.197514)},
+    {"name" : "Union Park",                  "number" : 13, "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.948404, -93.174634)},
+    {"name" : "Macalester-Groveland",        "number" : 14, "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.933938, -93.173002)},
+    {"name" : "Highland",                    "number" : 15, "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.915371, -93.172227)},
+    {"name" : "Summit Hill",                 "number" : 16, "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.937250, -93.135795)},
+    {"name" : "Capitol River",               "number" : 17, "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.949858, -93.095771)}
 ]    
 };
 function getIncidents(){
@@ -115,7 +151,6 @@ function getIncidents(){
 }//function
 function loadNeigborhoodMarkers(){
     for(let i = 0; i < 17; i++){
-        //console.log(neighborhoods.neighborhood[i].crimeCount);
         L.marker(neighborhoods.neighborhood[i].LatLng,{title:neighborhoods.neighborhood[i].name + ' : ' + neighborhoods.neighborhood[i].crimeCount}).addTo(map);
     }
 }
