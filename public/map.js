@@ -3,14 +3,18 @@ var map;
 var nwCorner;
 var seCorner;
 var bounds;
+var crime_api_url;
 
 
-function Init(){
+
+function Init(crime_api){
+    crime_api_url = crime_api;
+    console.log(crime_api_url);
     //Vue stuff
     app = new Vue({
         el: "#app",
         data: {
-            searchInput: '',
+            searchInput: "",
             searchType: '',
             incidents: '', 
             neighborhoods: '', 
@@ -77,48 +81,43 @@ function findAddress(){
     }
    
 }
-function showMarkerButton(incident, date, time, type, block) {
+function showMarkerButton(incident, date, time, code, block){
     block.replace('X', '1');
     getJSON('https://nominatim.openstreetmap.org/search?q=' + block + " Saint Paul " + '&format=json',function(err, data) {
-        L.marker([data[0].lat, data[0].lon], {title: 'Incident: ' + incident + '\nDate: ' + date + '\nTime: ' + time + '\nIncident Type: ' + type}).addTo(map);
+        if (data[0] == undefined){
+            alert();
+        }
+        else{
+            L.marker([data[0].lat, data[0].lon], {title: 'Incident: ' + incident + '\nDate: ' + date + '\nTime: ' + time + '\nCode: ' + code},
+             {color: '#FF0000'}).addTo(map);
+        }
     });
 }
 function updateLocation(){
-    //If searching by address, just send the map's center coordinates. 
     if(app.searchType == 'Latitude and Longitude'){
         app.currentLocation = map.getCenter();
     }
-    //If searching by address, convert the map's center coordinates to a set of addresses, and send that. 
     else{
         getJSON('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + map.getCenter().lat + '&lon=' + map.getCenter().lng, function(err,data){
             app.currentLocation = Object.values(data.address);
         });
     }
-    
-    //loop through each neighborhood...
     for(let i = 0; i < 17; i++){
-        //if it's inside the visible map, set it to 'visible'. 
         if(map.getBounds().contains(neighborhoods.neighborhood[i].LatLng)){
             neighborhoods.neighborhood[i].visible = true;
-        } //else, not visible. 
+        }
         else{
             neighborhoods.neighborhood[i].visible = false;
         }
-    }//for
-    
-    //retrieve the list of incidents from our restful crime server, and... 
-    getJSON('http://cisc-dean.stthomas.edu:8042/incidents?start_date=2019-10-01&end_date=2019-10-31', function(err,data){
+    }
+    getJSON('http://' + crime_api_url + '/incidents?start_date=2019-10-01&end_date=2019-10-31', function(err,data){
         for(key in data){
-            if(data.hasOwnProperty(key)){//??
+            if(data.hasOwnProperty(key)){
                 if(neighborhoods.neighborhood[data[key].neighborhood_number-1].visible == false){
-                    //for each row in the incidents table, if it's not currently visible, delete it from the temporary list of incidents. 
-                    delete data[key];
-                    console.log('deleted');
+                    delete data[key];s
                 }//if
             }//if
         }//for
-        
-        //Save the temporary list of incidents (the list from the st paul crime api, minus everything except what is also visible in the neighborhoods set). 
         app.incidents = data;
    });//callback
 }
@@ -144,7 +143,7 @@ var neighborhoods = { neighborhood :[
 ]    
 };
 function getIncidents(){
-    getJSON('http://cisc-dean.stthomas.edu:8042/incidents?start_date=2019-10-01&end_date=2019-10-31', function(err,data){
+    getJSON('http://' + crime_api_url + '/incidents?start_date=2019-10-01&end_date=2019-10-31', function(err,data){
         app.incidents = data;
         for(key in data){
             if(data.hasOwnProperty(key)){
@@ -166,16 +165,15 @@ function loadNeigborhoodMarkers(){
 }
 
 function getNeighborhoodNames(){
-    getJSON('http://cisc-dean.stthomas.edu:8042/neighborhoods', function(err, data) {
+    getJSON(crime_api_url + '/neighborhoods', function(err, data) {
         app.neighborhoods = data; 
     }); 
 }
 function getCodeTypes(){
-    getJSON('http://cisc-dean.stthomas.edu:8042/codes', function(err, data) {
+    getJSON(crime_api_url + '/codes', function(err, data) {
         app.codetypes = data; 
     }); 
 }
-
 
 var getJSON = function(url, callback) {
 //function to get the json object from the api
