@@ -40,7 +40,7 @@
                         <th>Case Number</th>
                         <th>Date</th>
                         <th>Time</th>
-                        <!--th>~~Code~~ Incident Type</th-->
+                        <th>Incident Type</th>
                         <th>Incident</th>
                         <th>Police Grid</th>
                         <th>Neighborhood Name</th>
@@ -52,10 +52,10 @@
                         <td>{{ key }}</td>
                         <td>{{ crime.date }}</td>
                         <td>{{ crime.time }}</td>
-                        <!--td>{{ crime.code }}</td-->
+                        <td>{{ codetypes['C'+crime.code] }}</td>
                         <td>{{ crime.incident }}</td>
                         <td>{{ crime.police_grid }}</td>
-                        <td>{{ crime.neighborhood_name }}</td>
+                        <td>{{ neighborhoods['N'+crime.neighborhood_number] }}</td>
                         <td>{{ crime.block }}</td>
                     </tr>
                 </table>
