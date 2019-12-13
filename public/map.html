@@ -10,14 +10,44 @@
         <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
         <!--vue.js library-->
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+        <!--Jquery-->
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script type="application/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script type="application/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
         <!--js scource-->
         <script type ='text/javascript' src = 'map.js'></script>
         <!--local css styling-->
         <link rel="stylesheet" href="style.css">
+        <script type="application/javascript">
+            function Prompt() {
+                $("#dialog-form").dialog({
+                    autoOpen: true,
+                    modal: true,
+                    width: "360px",
+                    buttons: {
+                        "Ok": function() {
+                            var prompt_input = $("#prompt_input");
+                            Init(prompt_input.val());
+                            $(this).dialog("close");
+                        },
+                        "Cancel": function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+            }
+        </script>
+        <!-- End: Prompt JavaScript -->
         
     </head>
 
-    <body onload="Init()">
+    <body onload="Prompt()">
+        <!-- Prompt -->
+        <div id="dialog-form">
+            <label for="name">URL for St. Paul Crime API:</label>
+            <input type="text" id="prompt_input" class="text ui-widget-content ui-corner-all" style="width: 320px;"/>
+        </div>
+        <!-- End: Prompt -->
         <!--Link to about page, 1/2-->
         <a href="/about">About</a>
         
