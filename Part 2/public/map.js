@@ -15,6 +15,7 @@ function Init(){
             incidents: '', 
             neighborhoods: '', 
             codetypes: '', 
+            currentLocation: '',
             computed: {
                 visible: function() {
                     
@@ -70,6 +71,11 @@ function findAddress(){
         alert('Please pick a search type for your search to work. Thank you!');
     }
    
+}
+function updateLocation(){
+    if(app.searchType == 'Latitude and Longitude'){
+        app.currentLocation = map.getCenter();
+    }
 }
 var neighborhoods = { neighborhood :[
     {"name" : "Conway/Battlecreek/Highwood", "number" : 1,  "crimeCount" : 0, "visible" : false, "LatLng" : new L.LatLng(44.945212, -93.028334)},

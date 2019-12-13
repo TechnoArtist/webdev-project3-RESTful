@@ -22,7 +22,7 @@
         <a href="/about">About</a>
         
         <!--The Map-->
-        <div id="map"></div>
+        <div id="map" @click = 'updateLocation'></div>
         <div id = 'app'>
             <select v-model="searchType">
                     <option disabled value="">Please select one</option>
@@ -33,6 +33,8 @@
             <button type="button" @click = 'findAddress'>
                 Submit
             </button>
+            <p>Current Location!</p>
+            <p>{{currentLocation}}</p>
             <!--The table-->
             <div class=scrollable>
                 <table>
