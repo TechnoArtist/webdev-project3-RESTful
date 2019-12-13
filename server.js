@@ -19,8 +19,6 @@ TODO:
     Tom: Add your image 
         drop an image named "Tom.png" into the public folder
     Add demo video
-    Add interesting facts about St Paul crime
-    Map: database searching
 */
 
 //imports and global variables 

@@ -48,6 +48,7 @@
             <input type="text" id="prompt_input" class="text ui-widget-content ui-corner-all" style="width: 320px;"/>
         </div>
         <!-- End: Prompt -->
+        
         <!--Link to about page, 1/2-->
         <a href="/about">About</a>
         
@@ -78,8 +79,6 @@
                         <th>Neighborhood Name</th>
                         <th>Block</th>
                     </tr>
-                    <!--TODO create variable "incidents" from our restful server /incidents-->
-                    <!--TODO v-if="within current map bounds"-->
                     <tr v-for="(crime, key) in incidents">
                         <td>{{ key }}</td>
                         <td>{{ crime.date }}</td>

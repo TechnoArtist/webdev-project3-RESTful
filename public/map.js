@@ -10,7 +10,7 @@ function Init(){
     app = new Vue({
         el: "#app",
         data: {
-            searchInput: "",
+            searchInput: '',
             searchType: '',
             incidents: '', 
             neighborhoods: '', 
@@ -175,7 +175,6 @@ function getCodeTypes(){
         app.codetypes = data; 
     }); 
 }
-//TODO rewrite the above functions such that they make the replacements here, instead of scattered through the code? 
 
 
 var getJSON = function(url, callback) {
