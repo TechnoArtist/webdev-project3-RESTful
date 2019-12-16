@@ -71,8 +71,13 @@ function findAddress(){
     else if(app.searchType == 'Latitude and Longitude'){
         var coordinates = [];
         coordinates = app.searchInput.split(',');
-        map.panTo(new L.LatLng(coordinates[0], coordinates[1]));
-        L.marker([coordinates[0], coordinates[1]], {title : app.searchInput}).addTo(map);
+        if((coordinates[0]<44.890712 || coordinates[0] > 44.988164) || (coordinates[1] < -93.207677 || coordinates[1] > -93.004602)){
+            alert('That location is outside Saint Paul, plsease try again')
+        }else{
+            
+            map.panTo(new L.LatLng(coordinates[0], coordinates[1]));
+            L.marker([coordinates[0], coordinates[1]], {title : app.searchInput}).addTo(map);
+        }
     }
     else{
         alert('Please pick a search type for your search to work. Thank you!');
@@ -109,7 +114,6 @@ function updateLocation(){
         }
     }
    app.shownIncidents = JSON.parse(JSON.stringify(app.incidents));
-   console.log(app.incidents);
    for(key in app.shownIncidents){
        if(app.shownIncidents.hasOwnProperty(key)){
            if(neighborhoods.neighborhood[app.shownIncidents[key].neighborhood_number-1].visible == false){
