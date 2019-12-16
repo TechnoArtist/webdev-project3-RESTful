@@ -22,8 +22,8 @@ function Init(crime_api){
             codetypes      : '', 
             currentLocation: '',
             popUpMarkers   : '',
-            startDate      : '',
-            endDate        : ''
+            startDate      : 'start_date=2019-10-01',
+            endDate        : 'end_date=2019-10-31'
         }
     });
     //mapstuff
@@ -141,9 +141,13 @@ var neighborhoods = { neighborhood :[
 ]    
 };
 function getIncidents(){
-    getJSON('http://' + crime_api_url + '/incidents?start_date=2019-10-01&end_date=2019-10-31', function(err,data){
+    getJSON('http://' + crime_api_url + '/incidents?' + app.startDate + '&' + app.endDate, function(err,data){
+        app.shownIncidents= '';
         app.incidents = data;
         app.shownIncidents = app.incidents;
+        for(let i = 0; i < 17; i++){
+            neighborhoods.neighborhood[i].crimeCount = 0;
+        }
         for(key in data){
             if(data.hasOwnProperty(key)){
                 for(let i = 0; i < 17; i++){
