@@ -51,7 +51,7 @@ app.get("/", (req, res) => {
 
 //handle the map page 
 app.get("/map", (req, res) => {
-    ReadFile(path.join(public_dir, 'map.html')).then((template) => {
+    ReadFile(path.join(public_dir, 'index.html')).then((template) => {
         res.type('html').send(template.toString()); 
 
     }, (err) => {
