@@ -56,16 +56,24 @@
         <div id="map" @click = 'updateLocation'></div>
         <div id = 'app'>
             <p>{{ currentLocation }}</p>
-            <select v-model="searchType">
-                    <option disabled value="">Please select one</option>
-                    <option>Address</option>
-                    <option>Latitude and Longitude</option>
-            </select>
-            <input v-model="searchInput" placeholder='Search Here!'>
-            <button type="button" @click = 'findAddress'>
-                Submit
-            </button>
-            
+            <div>
+                <select v-model="searchType">
+                        <option disabled value="">Please select one</option>
+                        <option>Address</option>
+                        <option>Latitude and Longitude</option>
+                </select>
+                <input v-model="searchInput" placeholder='Search Here!'>
+                <button type="button" @click = 'findAddress'>
+                    Submit 
+                </button>
+            </div>
+            <!--div>
+                <input v-model = "startDate" placeholder="Enter Start Date">
+                <input v-model = "endDate"   placeholder="Enter End Date">
+                <button type = "button" @click = "getIncidents">
+                    Submit
+                </button>
+            </div-->
             <!--The table-->
             <div class=scrollable>
                 <table>
@@ -79,7 +87,7 @@
                         <th>Neighborhood Name</th>
                         <th>Block</th>
                     </tr>
-                    <tr v-for="(crime, key) in incidents">
+                    <tr v-for="(crime, key) in shownIncidents">
                         <td>{{ key }}</td>
                         <td>{{ crime.date }}</td>
                         <td>{{ crime.time }}</td>
