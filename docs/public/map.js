@@ -14,18 +14,16 @@ function Init(crime_api){
     app = new Vue({
         el: "#app",
         data: {
-            searchInput: "",
-            searchType: '',
-            incidents: '', 
-            neighborhoods: '', 
-            codetypes: '', 
+            searchInput    : "",
+            searchType     : '',
+            incidents      : '', 
+            shownIncidents : '',
+            neighborhoods  : '', 
+            codetypes      : '', 
             currentLocation: '',
-            popUpMarkers: '',
-            computed: {
-                visible: function() {
-                    
-                }
-            }
+            popUpMarkers   : '',
+            startDate      : '',
+            endDate        : ''
         }
     });
     //mapstuff
@@ -85,7 +83,7 @@ function showMarkerButton(incident, date, time, code, block){
     block.replace('X', '1');
     getJSON('https://nominatim.openstreetmap.org/search?q=' + block + " Saint Paul " + '&format=json',function(err, data) {
         if (data[0] == undefined){
-            alert();
+            alert("That block cannot be found using our address finding algorithm. Try again later when the St Paul Police Department starts using better ways to track location");
         }
         else{
             L.marker([data[0].lat, data[0].lon], {title: 'Incident: ' + incident + '\nDate: ' + date + '\nTime: ' + time + '\nCode: ' + code},
@@ -110,18 +108,18 @@ function updateLocation(){
             neighborhoods.neighborhood[i].visible = false;
         }
     }
-    getJSON('http://' + crime_api_url + '/incidents?start_date=2019-10-01&end_date=2019-10-31', function(err,data){
-        for(key in data){
-            if(data.hasOwnProperty(key)){
-                if(neighborhoods.neighborhood[data[key].neighborhood_number-1].visible == false){
-                    delete data[key];s
-                }//if
-            }//if
-        }//for
-        app.incidents = data;
-   });//callback
+   app.shownIncidents = JSON.parse(JSON.stringify(app.incidents));
+   console.log(app.incidents);
+   for(key in app.shownIncidents){
+       if(app.shownIncidents.hasOwnProperty(key)){
+           if(neighborhoods.neighborhood[app.shownIncidents[key].neighborhood_number-1].visible == false){
+               delete app.shownIncidents[key];
+           }
+       }
+   }
+   console.log(app.shownIncidents);
 }
-"Summit/University"
+
 var neighborhoods = { neighborhood :[
     {"name" : "Conway/Battlecreek/Highwood", "number" : 1,  "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.945212, -93.028334)},
     {"name" : "Greater East Side",           "number" : 2,  "crimeCount" : 0, "visible" : true, "LatLng" : new L.LatLng(44.977230, -93.024469)},
@@ -145,6 +143,7 @@ var neighborhoods = { neighborhood :[
 function getIncidents(){
     getJSON('http://' + crime_api_url + '/incidents?start_date=2019-10-01&end_date=2019-10-31', function(err,data){
         app.incidents = data;
+        app.shownIncidents = app.incidents;
         for(key in data){
             if(data.hasOwnProperty(key)){
                 for(let i = 0; i < 17; i++){
@@ -165,12 +164,12 @@ function loadNeigborhoodMarkers(){
 }
 
 function getNeighborhoodNames(){
-    getJSON(crime_api_url + '/neighborhoods', function(err, data) {
+    getJSON('http://' + crime_api_url + '/neighborhoods', function(err, data) {
         app.neighborhoods = data; 
     }); 
 }
 function getCodeTypes(){
-    getJSON(crime_api_url + '/codes', function(err, data) {
+    getJSON('http://' + crime_api_url + '/codes', function(err, data) {
         app.codetypes = data; 
     }); 
 }
