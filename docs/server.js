@@ -29,7 +29,7 @@ var bodyParser = require('body-parser');
 var cors       = require('cors'); 
 
 var port        = parseInt(process.argv[2]); 
-var public_dir  = path.join(__dirname, 'public'); 
+var public_dir  = path.basename(__dirname); 
 
 //create the server
 var app = express(); 
@@ -40,7 +40,7 @@ app.use(cors());
 //handle the main (map) page 
 //Note: if there is an index.html in the public folder, that file will trigger without this function. 
 app.get("/", (req, res) => {
-    ReadFile(path.join(public_dir, 'index.html')).then((template) => {
+    ReadFile(path.join(__dirname, 'index.html')).then((template) => {
         res.type('html').send(template.toString()); 
 
     }, (err) => {
