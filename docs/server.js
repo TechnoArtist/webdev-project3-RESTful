@@ -29,7 +29,7 @@ var bodyParser = require('body-parser');
 var cors       = require('cors'); 
 
 var port        = parseInt(process.argv[2]); 
-var public_dir  = __dirname; 
+var public_dir  = path.join(__dirname, 'webdev-project3-RESTful'); 
 
 //create the server
 var app = express(); 
@@ -51,7 +51,7 @@ app.get("/", (req, res) => {
 
 //handle the map page 
 app.get("/map", (req, res) => {
-    ReadFile(path.join(public_dir, 'webdev-project3-RESTful/map.html')).then((template) => {
+    ReadFile(path.join(public_dir, path.join(public_dir, 'map.html'))).then((template) => {
         res.type('html').send(template.toString()); 
 
     }, (err) => {
@@ -62,7 +62,7 @@ app.get("/map", (req, res) => {
 
 //handle the about page
 app.get("/about", (req, res) => {
-    ReadFile(path.join(public_dir, 'webdev-project3-RESTful/about.html')).then((template) => {
+    ReadFile(path.join(public_dir, path.join(public_dir, 'about.html'))).then((template) => {
         res.type('html').send(template.toString()); 
 
     }, (err) => {
