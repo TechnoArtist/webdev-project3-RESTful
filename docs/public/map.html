@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+
+        <title>St Paul Crimes</title>
+        <!--leaflet.js stye sheet and library scource--> 
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+        <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+        <!--vue.js library-->
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+        <!--Jquery-->
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script type="application/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script type="application/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+        <!--js scource-->
+        <script type ='text/javascript' src = 'map.js'></script>
+        <!--local css styling-->
+        <link rel="stylesheet" href="style.css">
+        <script type="application/javascript">
+            function Prompt() {
+                $("#dialog-form").dialog({
+                    autoOpen: true,
+                    modal: true,
+                    width: "360px",
+                    buttons: {
+                        "Ok": function() {
+                            var prompt_input = $("#prompt_input");
+                            Init(prompt_input.val());
+                            $(this).dialog("close");
+                        },
+                        "Cancel": function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+            }
+        </script>
+        <!-- End: Prompt JavaScript -->
+        
+    </head>
+
+    <body onload="Prompt()">
+        <!-- Prompt -->
+        <div id="dialog-form">
+            <label for="name">URL for St. Paul Crime API:</label>
+            <input type="text" id="prompt_input" class="text ui-widget-content ui-corner-all" style="width: 320px;"/>
+        </div>
+        <!-- End: Prompt -->
+        
+        <!--Link to about page, 1/2-->
+        <a href="/about">About</a>
+        
+        <!--The Map-->
+        <div id="map" @click = 'updateLocation'></div>
+        <div id = 'app'>
+            <p>{{ currentLocation }}</p>
+            <div>
+                <select v-model="searchType">
+                        <option disabled value="">Please select one</option>
+                        <option>Address</option>
+                        <option>Latitude and Longitude</option>
+                </select>
+                <input v-model="searchInput" placeholder='Search Here!'>
+                <button type="button" @click = 'findAddress'>
+                    Submit 
+                </button>
+            </div>
+            <div>
+                <input v-model = "startDate" placeholder="Enter Start Date">
+                <input v-model = "endDate"   placeholder="Enter End Date">
+                <button type = "button" @click = "getIncidents">
+                    Submit
+                </button>
+            </div>
+            <!--The table-->
+            <div class=scrollable>
+                <table>
+                    <tr>
+                        <th>Case Number</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Incident Type</th>
+                        <th>Incident</th>
+                        <th>Police Grid</th>
+                        <th>Neighborhood Name</th>
+                        <th>Block</th>
+                    </tr>
+                    <tr v-for="(crime, key) in shownIncidents">
+                        <td>{{ key }}</td>
+                        <td>{{ crime.date }}</td>
+                        <td>{{ crime.time }}</td>
+                        <td>{{ codetypes['C'+crime.code] }}</td>
+                        <td>{{ crime.incident }}</td>
+                        <td>{{ crime.police_grid }}</td>
+                        <td>{{ neighborhoods['N'+crime.neighborhood_number] }}</td>
+                        <td>{{ crime.block }}</td>
+                        <td><button type ="button" @click = "showMarkerButton( crime.incident, crime.date, crime.time, codetypes['C' + crime.code], crime.block)"> Show On Map</button> </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!--Link to about page, 2/2-->
+        <!--a href="/about">About</a-->
+    </body>
+
+</html>

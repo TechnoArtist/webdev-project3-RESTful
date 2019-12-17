@@ -40,7 +40,7 @@ app.use(cors());
 //handle the main (map) page 
 //Note: if there is an index.html in the public folder, that file will trigger without this function. 
 app.get("/", (req, res) => {
-    ReadFile(path.join(public_dir, 'map.html')).then((template) => {
+    ReadFile(path.join(public_dir, 'index.html')).then((template) => {
         res.type('html').send(template.toString()); 
 
     }, (err) => {
@@ -51,7 +51,7 @@ app.get("/", (req, res) => {
 
 //handle the map page 
 app.get("/map", (req, res) => {
-    ReadFile(path.join(public_dir, 'index.html')).then((template) => {
+    ReadFile(path.join(public_dir, 'map.html')).then((template) => {
         res.type('html').send(template.toString()); 
 
     }, (err) => {
