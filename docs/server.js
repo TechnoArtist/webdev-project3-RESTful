@@ -51,7 +51,7 @@ app.get("/", (req, res) => {
 
 //handle the map page 
 app.get("/map", (req, res) => {
-    ReadFile(path.join(public_dir, 'map.html')).then((template) => {
+    ReadFile(path.join(public_dir, 'webdev-project3-RESTful/map.html')).then((template) => {
         res.type('html').send(template.toString()); 
 
     }, (err) => {
@@ -62,7 +62,7 @@ app.get("/map", (req, res) => {
 
 //handle the about page
 app.get("/about", (req, res) => {
-    ReadFile(path.join(public_dir, 'about.html')).then((template) => {
+    ReadFile(path.join(public_dir, 'webdev-project3-RESTful/about.html')).then((template) => {
         res.type('html').send(template.toString()); 
 
     }, (err) => {
